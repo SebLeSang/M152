@@ -9,7 +9,7 @@
         integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
-    <title>CFPT</title>
+    <title>Ajouter un post</title>
 </head>
 <nav class="navbar navbar-expand-lg navbar-light bg-primary">
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
@@ -43,32 +43,7 @@
     </div>
 </nav>
 <div class="container mt-5">
-    <div class="row">
-        <div class="col-md-5">
-            <div class="card">
-                <img src="#" class="card-img-top">
-                <div class="card-body">
-                    <h5 class="card-title">Nom du blog</h5>
-                    <p class="card-text">45 followers, 35 posts</p>
-                </div>
-            </div>
-        </div>
 
-        <div class="col-md-7">
-            <div class="card">
-                <div class="card-body">
-                    <h4 class="card-title">Welcome</h5>
-                </div>
-            </div>
-            <div class="card">
-                <img src="#" class="card-img-top">
-                <div class="card-body">
-                    <h5 class="card-title">Titre du post</h5>
-                    <p class="card-text">1200 followers, 456 posts</p>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
 
 <body>
