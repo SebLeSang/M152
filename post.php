@@ -27,10 +27,6 @@
                         fill="white" />
                 </svg>
             </ul>
-            <form class="form-inline mr-5">
-                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-                <button class="btn btn-outline-light my-2 my-sm-0" type="submit">Search</button>
-            </form>
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item active">
                     <a class="nav-link text-light" href="index.php">Home</a>
@@ -44,16 +40,41 @@
             </ul>
         </div>
     </nav>
-    <div class="container mt-5">
-        <form>
-            <div class="form-group">
-                <label for="exampleFormControlFile1">Example file input</label>
-                <input type="file" class="form-control-file" id="exampleFormControlFile1">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <form action"php/newPost.php" method="post" name="formPost" id="formPost"
+                        enctype="multipart/form-data">
+                        <div class="form-group">
+                            <input type="text" name="" id="commentaire" name="commentaire" class="form-control"
+                                placeholder="Commentaire">
+                            <input type="file" name="mesfichiers[]" class="form-control-file"
+                                accept="image/jpeg,image/png,image/gif" multiple>
+                            <input type="submit" value="oof" class="btn btn-primary mb-2">
+                        </div>
+                    </form>
+                    <?php
+                        if (isset($_FILES) && is_array($_FILES) && count($_FILES) > 0) {
+                            $fichiers = $_FILES['mesfichiers'];
+                            for($i=0; $i < count($fichiers['name']); $i++){
+                                echo '<p>';
+                                echo 'Fichier ' . $fichiers['name'][$i] . ' reçu';
+                                echo '<br>';
+                                echo 'Taille '.$fichiers['size'][$i].' octets';
+                                $nom_fichier = preg_replace('/[^a-z0-9\.\-]/i', '', $fichiers['name'][$i]);
+                                move_uploaded_file($fichiers['tmp_name'][$i], 'img_temp/' . $nom_fichier);
+                                if  (preg_match('/image/', $fichiers['type'][$i])) {
+                                    echo '<br><img src="img_temp/' . $nom_fichier . '">';
+                                }
+                                echo '</p>';
+                            }
+                        }
+                    ?>
+                </div>
             </div>
-        </form>
+        </div>
     </div>
-
-
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
         integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous">
     </script>
