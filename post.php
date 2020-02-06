@@ -44,33 +44,15 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="card">
-                    <form action"php/newPost.php" method="post" name="formPost" id="formPost"
-                        enctype="multipart/form-data">
+                    <form method="POST" action="php/newPost.php" id="formPost" enctype="multipart/form-data">
                         <div class="form-group">
-                            <input type="text" name="" id="commentaire" name="commentaire" class="form-control"
+                            <input type="text" id="commentaire" name="commentaire" class="form-control"
                                 placeholder="Commentaire">
-                            <input type="file" name="mesfichiers[]" class="form-control-file"
+                            <input type="file" name="myFiles[]" class="form-control-file"
                                 accept="image/jpeg,image/png,image/gif" multiple>
-                            <input type="submit" value="oof" class="btn btn-primary mb-2">
+                            <input type="submit" value="Envoyer">
                         </div>
                     </form>
-                    <?php
-                        if (isset($_FILES) && is_array($_FILES) && count($_FILES) > 0) {
-                            $fichiers = $_FILES['mesfichiers'];
-                            for($i=0; $i < count($fichiers['name']); $i++){
-                                echo '<p>';
-                                echo 'Fichier ' . $fichiers['name'][$i] . ' reçu';
-                                echo '<br>';
-                                echo 'Taille '.$fichiers['size'][$i].' octets';
-                                $nom_fichier = preg_replace('/[^a-z0-9\.\-]/i', '', $fichiers['name'][$i]);
-                                move_uploaded_file($fichiers['tmp_name'][$i], 'img_temp/' . $nom_fichier);
-                                if  (preg_match('/image/', $fichiers['type'][$i])) {
-                                    echo '<br><img src="img_temp/' . $nom_fichier . '">';
-                                }
-                                echo '</p>';
-                            }
-                        }
-                    ?>
                 </div>
             </div>
         </div>
