@@ -23,5 +23,7 @@ if (isset($_FILES) && is_array($_FILES) && count($_FILES) > 0) {
         } else
             echo "la taille totale des fichier dépasse 70M ou la taille d'un fichier est supérieur a 3M";
     }
-    createPost($msg, $idArr);
+    if (createPost($msg, $idArr) == true) {
+        header('Location: ../index.php'); 
+    }
 }

@@ -84,3 +84,51 @@ function createPost($comment, $idMediaArray)
     EDatabase::commit();
     return true;
 }
+
+function getAllPosts()
+{
+    $arr = array();
+    $sql = "SELECT p.creationDate AS creaDate, p.modificationDate AS modifDate, p.commentaire AS comment,
+            group_concat(m.nomMedia ORDER BY m.idmedia) AS medias,
+            group_concat(m.typeMedia ORDER BY m.idmedia) AS types
+            FROM post AS p
+            JOIN contenir AS c ON p.idPost = c.post_idPost
+            JOIN media AS m ON m.idmedia = c.media_idmedia
+            GROUP BY p.idPost
+            UNION
+            SELECT p.creationDate, p.modificationDate, p.commentaire,
+            null AS medias,
+            null AS types
+            FROM post AS p
+            WHERE p.idPost NOT IN (
+              SELECT contenir.post_idPost
+              FROM contenir)
+            GROUP BY p.idPost
+            ORDER BY creaDate desc";
+
+    try {
+        $stmt = EDatabase::prepare($sql, array(PDO::ATTR_CURSOR, PDO::CURSOR_SCROLL));
+        $stmt->execute();
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)) {
+            $re = '/,/m';
+            preg_match_all($re, $row["medias"], $matches, PREG_SET_ORDER, 0);
+            if (empty($matches[0][0])) {
+                $p = new Post($row["creaDate"], $row["modifDate"], $row["comment"], $row["medias"], $row['types']);
+                array_push($arr, $p);
+            } else {
+                $medias = explode(',', $row["medias"]);
+                $types = explode(',', $row['types']);
+                $count = 0;
+                foreach ($medias as $m) {
+                    $p = new Post($row["creaDate"], $row["modifDate"], $row["comment"], $medias[$count], $types[$count]);
+                    array_push($arr, $p);
+                    $count++;
+                }
+            }
+        }
+    } catch (PDOException  $e) {
+        echo "getAllPosts Error: " . $e->getMessage();
+        return false;
+    }
+    return $arr;
+}
