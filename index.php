@@ -1,3 +1,9 @@
+<?php
+require_once $_SERVER['DOCUMENT_ROOT'] . '/m152/php/includes/incAll/inc.all.php';
+
+$posts = getAllPosts();
+
+?>
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -58,13 +64,27 @@
                         <h4 class="card-title">Welcome</h5>
                     </div>
                 </div>
-                <div class="card">
-                    <img src="#" class="card-img-top">
-                    <div class="card-body">
-                        <h5 class="card-title">Titre du post</h5>
-                        <p class="card-text">1200 followers, 456 posts</p>
-                    </div>
-                </div>
+                <?php
+                $lastPostComment = "";
+                foreach ($posts as $p) {
+                    if ($lastPostComment == $p->comment) {
+                        ?>
+                <img src="<?= './img_temp/' . $p->medias ?>" class="card-img-top">
+                <?php 
+                    }
+                    else{
+                        ?>
+                <br>
+                <h1><?= $p->comment ?></h1>
+                <img src="<?= './img_temp/' . $p->medias ?>" class="card-img-top">
+
+                <?php
+                    }
+                    ?>
+                <?php
+                    $lastPostComment = $p->comment;
+                }
+                ?>
             </div>
         </div>
     </div>
