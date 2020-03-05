@@ -49,7 +49,7 @@
                             <input type="text" id="commentaire" name="commentaire" class="form-control"
                                 placeholder="Commentaire">
                             <input type="file" name="myFiles[]" class="form-control-file"
-                                accept="image/jpeg,image/png,image/gif" multiple>
+                                accept="image/jpeg,image/png,image/gif,video/*" multiple>
                             <input type="submit" value="Envoyer">
                         </div>
                     </form>
