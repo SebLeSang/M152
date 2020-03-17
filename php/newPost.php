@@ -12,7 +12,7 @@ if ($msg != "") {
             $total_size += $files['size'][$i];
             if ($total_size < 70000000 || $files['size'][$i] < 3000000) {
                 $type = explode("/", $files["type"][0]);
-                if ($type[0] == "image" || $type[0] == "video") {
+                if ($type[0] == "image" || $type[0] == "video" || $type[0] == "audio") {
                     $fileName = $files['name'][$i];
                     $splitName = explode(".", $fileName);
                     $newName = uniqid($splitName[0]);

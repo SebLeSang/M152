@@ -75,6 +75,10 @@ $posts = getAllPosts();
                                 <video width="400" autoplay loop muted controls>
                                     <source src="<?= './img_temp/' . $p->medias ?>" type="<?= $p->type ?>">
                                 </video>
+                            <?php
+                            } else if ($type[0] == "audio") {
+                            ?>
+                                <audio src="<?= './img_temp/' . $p->medias ?>"></audio>
                         <?php
                             }
                         }
@@ -95,6 +99,12 @@ $posts = getAllPosts();
                                 <video width="400" autoplay loop muted controls>
                                     <source src="<?= './img_temp/' . $p->medias ?>" type="<?= $p->type ?>">
                                 </video>
+                            <?php
+                            } else if ($type[0] == "audio") {
+                            ?>
+                                <audio controls>
+                                    <source src="<?= './img_temp/' . $p->medias ?>" type="audio/mpeg">
+                                </audio>
                     <?php
                             }
                         }
