@@ -44,16 +44,6 @@ $posts = getAllPosts();
     </nav>
     <div class="container mt-5">
         <div class="row">
-            <div class="col-md-5">
-                <div class="card">
-                    <img src="#" class="card-img-top">
-                    <div class="card-body">
-                        <h5 class="card-title">Nom du blog</h5>
-                        <p class="card-text">45 followers, 35 posts</p>
-                    </div>
-                </div>
-            </div>
-
             <div class="col-md-7">
                 <div class="card">
                     <div class="card-body">
@@ -62,6 +52,7 @@ $posts = getAllPosts();
                 </div>
                 <?php
                 $lastPostComment = "";
+                $idArray = array();
                 foreach ($posts as $p) {
                     $type = explode("/", $p->type);
                     if ($lastPostComment == $p->comment) {
@@ -88,6 +79,7 @@ $posts = getAllPosts();
                     ?>
                         <br>
                         <h1><?= $p->comment ?></h1>
+                        <button id="btn-click">Delete post</button>
                         <?php
                         if ($p->medias != null) {
                             if ($type[0] == "image") {
@@ -105,12 +97,13 @@ $posts = getAllPosts();
                                 <audio controls>
                                     <source src="<?= './img_temp/' . $p->medias ?>" type="audio/mpeg">
                                 </audio>
-                    <?php
+                        <?php
                             }
                         }
-                    }
-                    ?>
+                        ?>
                 <?php
+                    }
+                    array_push($idArray, $p->idMedias);
                     $lastPostComment = $p->comment;
                 }
                 ?>
@@ -118,7 +111,28 @@ $posts = getAllPosts();
         </div>
     </div>
 
-
+    <script>
+        function deletePost(idPost) {
+            $.ajax({
+                method: 'POST',
+                url: 'php/ajax/delete.php',
+                data: {
+                    'id': idPost
+                },
+                dataType: 'json',
+                success: function(data) {
+                    switch (data.ReturnCode) {
+                        case 0:
+                            window.location.href = "#";
+                            break;
+                    }
+                },
+                error: function(jqXHR) {
+                    console.log(jqXHR);
+                }
+            });
+        }
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous">
     </script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous">

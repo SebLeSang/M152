@@ -88,23 +88,25 @@ function createPost($comment, $idMediaArray)
 function getAllPosts()
 {
     $arr = array();
-    $sql = "SELECT p.creationDate AS creaDate, p.modificationDate AS modifDate, p.commentaire AS comment,
-            group_concat(m.nomMedia ORDER BY m.idmedia) AS medias,
-            group_concat(m.typeMedia ORDER BY m.idmedia) AS types
-            FROM post AS p
-            JOIN contenir AS c ON p.idPost = c.post_idPost
-            JOIN media AS m ON m.idmedia = c.media_idmedia
-            GROUP BY p.idPost
-            UNION
-            SELECT p.creationDate, p.modificationDate, p.commentaire,
-            null AS medias,
-            null AS types
-            FROM post AS p
-            WHERE p.idPost NOT IN (
-              SELECT contenir.post_idPost
-              FROM contenir)
-            GROUP BY p.idPost
-            ORDER BY creaDate desc";
+    $sql = "SELECT p.creationDate AS creaDate, p.modificationDate AS modifDate, p.commentaire AS comment, p.idPost as idP,
+    group_concat(m.idmedia ORDER BY m.idmedia) AS idMedias,
+    group_concat(m.nomMedia ORDER BY m.idmedia) AS medias,
+    group_concat(m.typeMedia ORDER BY m.idmedia) AS types
+    FROM post AS p
+    JOIN contenir AS c ON p.idPost = c.post_idPost
+    JOIN media AS m ON m.idmedia = c.media_idmedia
+    GROUP BY p.idPost
+    UNION
+    SELECT p.creationDate, p.modificationDate, p.commentaire, p.idPost,
+    null as idMedias,
+    null AS medias,
+    null AS types
+    FROM post AS p
+    WHERE p.idPost NOT IN (
+      SELECT contenir.post_idPost
+      FROM contenir)
+    GROUP BY p.idPost
+    ORDER BY creaDate desc";
 
     try {
         $stmt = EDatabase::prepare($sql, array(PDO::ATTR_CURSOR, PDO::CURSOR_SCROLL));
@@ -113,14 +115,15 @@ function getAllPosts()
             $re = '/,/m';
             preg_match_all($re, $row["medias"], $matches, PREG_SET_ORDER, 0);
             if (empty($matches[0][0])) {
-                $p = new Post($row["creaDate"], $row["modifDate"], $row["comment"], $row["medias"], $row['types']);
+                $p = new Post($row["creaDate"], $row["modifDate"], $row["comment"], $row["medias"], $row['types'], $row['idP'], $row['idMedias']);
                 array_push($arr, $p);
             } else {
                 $medias = explode(',', $row["medias"]);
                 $types = explode(',', $row['types']);
+                $ids = explode(',', $row["idMedias"]);
                 $count = 0;
                 foreach ($medias as $m) {
-                    $p = new Post($row["creaDate"], $row["modifDate"], $row["comment"], $medias[$count], $types[$count]);
+                    $p = new Post($row["creaDate"], $row["modifDate"], $row["comment"], $medias[$count], $types[$count], $row['idP'], $ids[$count]);
                     array_push($arr, $p);
                     $count++;
                 }
@@ -131,4 +134,57 @@ function getAllPosts()
         return false;
     }
     return $arr;
+}
+
+function DeletePost($id)
+{
+    EDatabase::beginTransaction();
+    // delete dans la table contenir
+    $sql = 'DELETE from contenir WHERE post_idPost = :id';
+    try {
+        $stmt = EDatabase::prepare($sql);
+        $stmt->execute(array(
+            ':id' => $id,
+        ));
+    } catch (PDOException $e) {
+        echo "DeletePost error" . $e->getMessage();
+        EDatabase::rollBack();
+        return false;
+    }
+
+    // delete dans la table post
+    $sql = 'DELETE from post WHERE idPost = :id';
+    try {
+        $stmt = EDatabase::prepare($sql);
+        $stmt->execute(array(
+            ':id' => $id,
+        ));
+    } catch (PDOException $e) {
+        echo "DeletePost error" . $e->getMessage();
+        EDatabase::rollBack();
+        return false;
+    }
+
+    // si tout va bien
+    EDatabase::commit();
+    return true;
+}
+
+function DeleteMedia($id)
+{
+    EDatabase::beginTransaction();
+
+    $sql = 'DELETE from media WHERE idmedia = :id';
+    try {
+        $stmt = EDatabase::prepare($sql);
+        $stmt->execute(array(
+            ':id' => $id,
+        ));
+    } catch (PDOException $e) {
+        echo "DeleteMedia error" . $e->getMessage();
+        EDatabase::rollBack();
+        return false;
+    }
+    EDatabase::commit();
+    return true;
 }
